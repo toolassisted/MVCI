@@ -89,7 +89,7 @@
 		.get(function(err,data){
 			var FD = d3.select("#FRAMEDATA");
 			FD.selectAll("*").remove();
-			var FDLIST = FD.selectAll("li").data(data).enter().append("li"); //.text(function(d){return JSON.stringify(d);})
+			var FDLIST = FD.selectAll("li").data(data).enter().append("li").attr("id",function(d){return d.CHAR.replace(/[^A-Za-z]/g,"");});
 			FDDIV = FDLIST.append("div");
 			FDDIV.append("span").text(function(d){return d.CHAR;});
 			FDDIV.append("span").text(function(d){return d["FRAME DATA"];}).classed("STATE",true);
@@ -103,6 +103,11 @@
 			FDLIST.on("click",function(CHAR){
 				d3.tsv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTWdkcMZaZxscFlZAmHyqqD9i6RQ_4f1Ize54-3OX76nvjTANRSvUl6mib8d_htgixfZB0gMWvOc-T8/pub?gid="+CHAR.GID+"&output=tsv")
 					.get(function(err,datachar){
+						if(history.pushState) {
+							history.pushState(null, null, "#" + CHAR.CHAR.replace(/[^A-Za-z]/g,""));
+						} else {
+							location.hash = CHAR.CHAR.replace(/[^A-Za-z]/g,"");
+						}
 						var FDTABLE = d3.select("#FRAMEDATACHAR");
 						FDTABLE.selectAll("*").remove();
 						var FDHEAD = FDTABLE.append("thead").append("tr");
@@ -135,8 +140,9 @@
 						FDROW.append("td").text(function(d){return d["INV FRAME"];});
 						FDROW.append("td").text(function(d){return d["NOTE"];});
 					});
-
 			});
+			var HASH = d3.select(window.location.hash);
+			if (HASH) HASH.node().click();
 		});
 </script>
 
