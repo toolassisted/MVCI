@@ -9,6 +9,42 @@
 		body {
 			font-family: sans-serif;
 		}
+		.MOVELIST {
+			color: #ccc;
+		}
+		.MOVELIST span {
+			padding: 1em;
+		}
+		.MOVELISTNOTE {
+			color: #f33;
+		}
+		.MOVELISTNOTE span {
+			padding: 1em;
+		}
+		.STATE {
+			padding: 1em;
+			color: #ccc;
+		}
+		#FRAMEDATA {
+			line-height: 2em;
+			padding: 1em;
+		}
+		#FRAMEDATA li:hover {
+			background-color: #cfc;
+			cursor: pointer;
+		}
+		#FRAMEDATADIV {
+			display: flex;
+		}
+		#FRAMEDATACHAR tr:hover {
+			background-color: #cfc;
+		}		
+		#FRAMEDATACHAR tr:nth-child(even) {
+			background-color: #efefef;
+		}
+		#FRAMEDATACHAR td {
+			padding: 0.5em;
+		}
 	</style>
 </head>
 <body>
@@ -30,7 +66,78 @@
 <ul>
 <li><a href="https://discord.gg/m3TJxma">MVCI ME C DISCORD LOL</a></li>
 <li><a href="https://docs.google.com/spreadsheets/d/1-8bUWUvF_479T6sJYlvZ5Xc0aSq005l9rKmmNoaABNc/#gid=967386212">MVCI GOOGLE SHEET LOL</a></li>
+<li>MOVE LIST = @olafredland @mrtlxp @starvinggamer @CSword123</li>
+<li>DONATE = @Black0utnz @fchampryan @MOREEPO @skisonic</li>
 </ul>
+
+<h1>MVCI FRAME DATA LOL</h1>
+<div id="FRAMEDATADIV">
+<ul id="FRAMEDATA">	
+</ul>
+<table id="FRAMEDATACHAR">
+<tr>
+	<td>U CLICK CHAR LOL</td>
+</tr>	
+</table>
+</div>
+
+<script type="text/javascript" src="d3.min.js"></script>
+<script>
+	// https://docs.google.com/spreadsheets/d/e/2PACX-1vTWdkcMZaZxscFlZAmHyqqD9i6RQ_4f1Ize54-3OX76nvjTANRSvUl6mib8d_htgixfZB0gMWvOc-T8/pubhtml
+	d3.tsv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTWdkcMZaZxscFlZAmHyqqD9i6RQ_4f1Ize54-3OX76nvjTANRSvUl6mib8d_htgixfZB0gMWvOc-T8/pub?gid=967386212&output=tsv")
+		.get(function(err,data){
+			var FD = d3.select("#FRAMEDATA");
+			FD.selectAll("*").remove();
+			var FDLIST = FD.selectAll("li").data(data).enter().append("li"); //.text(function(d){return JSON.stringify(d);})
+			FDDIV = FDLIST.append("div");
+			FDDIV.append("span").text(function(d){return d.CHAR;});
+			FDDIV.append("span").text(function(d){return d["FRAME DATA"];}).classed("STATE",true);
+			// FDDIV = FDLIST.append("div").classed("MOVELIST",true);
+			// FDDIV.append("span").text(function(d){return "MOVE LIST: "});
+			// FDDIV.append("span").text(function(d){return d["MOVE LIST 1"];});
+			// FDDIV.append("span").text(function(d){return d["MOVE LIST 2"];});
+			// FDDIV.append("span").text(function(d){return d["MOVE LIST 3"];});
+			// FDDIV = FDLIST.append("div").classed("MOVELISTNOTE",true);
+			// FDDIV.append("span").text(function(d){return d["NOTE"];});
+			FDLIST.on("click",function(CHAR){
+				d3.tsv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTWdkcMZaZxscFlZAmHyqqD9i6RQ_4f1Ize54-3OX76nvjTANRSvUl6mib8d_htgixfZB0gMWvOc-T8/pub?gid="+CHAR.GID+"&output=tsv")
+					.get(function(err,datachar){
+						var FDTABLE = d3.select("#FRAMEDATACHAR");
+						FDTABLE.selectAll("*").remove();
+						var FDHEAD = FDTABLE.append("thead").append("tr");
+						FDHEAD.append("th").text(CHAR.CHAR);
+						FDHEAD.append("th").text("INPUT");
+						FDHEAD.append("th").text("START");
+						FDHEAD.append("th").text("ACTIVE");
+						FDHEAD.append("th").text("RECOVERY");
+						FDHEAD.append("th").text("TOTAL");
+						FDHEAD.append("th").text("DMG");
+						FDHEAD.append("th").text("BLK ADV");
+						FDHEAD.append("th").text("HIT ADV");
+						FDHEAD.append("th").text("CH ADV");
+						FDHEAD.append("th").text("INV FRAME");
+						FDHEAD.append("th").text("NOTE");
+
+						var FDROW = FDTABLE.append("tbody").selectAll("tr").data(datachar).enter().append("tr"); //.text(function(d){return JSON.stringify(d);})
+						FDDIV = FDLIST.append("div");
+						// FDROW.append("td").text(function(d){return d.CHAR;});
+						FDROW.append("td").text(function(d){return d.MOVE;});
+						FDROW.append("td").text(function(d){return d.INPUT;});
+						FDROW.append("td").text(function(d){return d["START"];});
+						FDROW.append("td").text(function(d){return d["ACTIVE"];});
+						FDROW.append("td").text(function(d){return d["RECOVERY"];});
+						FDROW.append("td").text(function(d){return d["TOTAL"];});
+						FDROW.append("td").text(function(d){return d["DMG"];});
+						FDROW.append("td").text(function(d){return d["BLK ADV"];});
+						FDROW.append("td").text(function(d){return d["HIT ADV"];});
+						FDROW.append("td").text(function(d){return d["CH ADV"];});
+						FDROW.append("td").text(function(d){return d["INV FRAME"];});
+						FDROW.append("td").text(function(d){return d["NOTE"];});
+					});
+
+			});
+		});
+</script>
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
